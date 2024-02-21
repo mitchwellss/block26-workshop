@@ -1,7 +1,6 @@
-import React from "react";
+import { useState, useEffect, React } from "react";
 import ContactRow from "./ContactRow";
 //import useState
-import { useState } from "react";
 
 const dummyContacts = [
   { id: 1, name: "R2-D2", phone: "222-222-2222", email: "r2d2@droids.com" },
@@ -10,8 +9,22 @@ const dummyContacts = [
 ];
 
 function ContactList() {
-  const [contacts, setContacts] = useState(dummyContacts);
+  const [contacts, setContacts] = useState([]);
   console.log("Contacts: ", contacts);
+
+  useEffect(() => {
+    async function fetchContacts() {
+      try {
+        const response = await fetch("https://fsa-jsonplaceholder-69b5c48f1259.herokuapp.com/users");
+        const data = await response.json();
+        setContacts(data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchContacts();
+  }, []);
+
   return (
     <table id="contacts-table">
       <thead>
@@ -26,7 +39,9 @@ function ContactList() {
           <td>Email</td>
           <td>Phone</td>
         </tr>
-        {contacts.map((contact) => { return <ContactRow key={contact.id} contact={contact}/>})}
+        {contacts.map((contact) => {
+          return <ContactRow key={contact.id} contact={contact} />;
+        })}
       </tbody>
     </table>
   );
